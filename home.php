@@ -10,9 +10,6 @@ session_start();
     <script src="./script/js/sweetalert.min.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
-    <script type="text/javascript" src="//code.jquery.com/jquery-1.12.4.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
 
     <style type="text/css">
         .btnlogout {
@@ -50,6 +47,7 @@ session_start();
     </style>
     <script type="text/javascript">
         $(document).ready(function () {
+
 
             function formdataget() {
                 $id = $("#data_id").val();
@@ -147,12 +145,13 @@ session_start();
                                 console.log(res);
                                 var len = res.length;
                                 var txt = "";
-
+                                var name = "";
                                 if (len > 0) {
                                     for (var i = 0; i < len; i++) {
                                         if (res[i].name && res[i].email && res[i].password) {
                                             txt += '<tr class="settable">';
                                             txt += '<td>' + res[i].name + '</td>';
+                                            name +='<option>' + res[i].name + '</option>';
                                             txt += '<td>' + res[i].email + '</td>';
                                             // txt += '<td><img src="http://192.168.200.83/JS_Example/Rest_api_php/img/' + res[i].profile + '" height="50px" width="50px" class="img-circle"/></td>';
                                             txt += '<td><a class="_Editdata" _id="' + res[i].id + '">Edit</a> | ';
@@ -163,15 +162,45 @@ session_start();
                                 }
                                 if (txt !== "") {
                                     $("#tblbody").html(txt);
-
+                                    $(".single-search-name").html(name);
                                 }
                             },
                             error: function (err) {
                                 console.log('error');
                                 alert("error" + err);
                             }
-                        }).done(function () {
+                        }).done(function (d) {
+                            $(".single-search-name").select2();
                             $("#tbl").DataTable();
+                            /*$("#tbl").DataTable({
+                                serverSide: true,
+                                ordering: false,
+                                searching: false,
+                                ajax: function ( data, callback) {
+                                    var out = [];
+                                    // console.log(data);
+
+                                    d.forEach(function(e){
+                                        out.push([e.name,e.email,"<a class='_Editdata' _id='"+e.id +"' >Edit</a> | <a class='_Removedata' _id='" + e.id + "'>Remove</a>"])
+                                    })
+
+                                    setTimeout( function () {
+                                        callback( {
+                                            draw: data.draw,
+                                            data: out,
+                                            recordsTotal: out.length,
+                                            recordsFiltered: out.length
+                                        } );
+                                    }, 50 );
+                                },
+                                scrollY: 200,
+                                scroller: {
+                                   loadingIndicator: true
+                                },success : function () {
+                                    alert();
+                                }
+                            });*/
+
                             $("._Removedata").click(function () {
 
                                 $("#up").hide();
@@ -252,7 +281,7 @@ session_start();
                     }
                 });
             });
-            $("#chktbl").DataTable();
+            //$("#chktbl").DataTable();
             //$("#tbl").DataTable();
         });
     </script>
@@ -265,6 +294,10 @@ require_once("header.php");
 <center>
     <h3>Display Record</h3><hr>
 </center>
+Search By Name(select2 lib):
+<select class="single-search-name" name="name">
+
+</select><br>
 <div class="row" id="up">
     <div class="col-sm-3">
         <input type="hidden" id="data_id" value="-1"><br>
